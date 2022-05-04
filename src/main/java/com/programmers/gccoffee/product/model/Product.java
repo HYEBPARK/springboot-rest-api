@@ -16,6 +16,9 @@ public class Product {
     public Product(UUID productId, String productName,
         Category category, long price, String description, LocalDateTime createdAt,
         LocalDateTime updatedAt) {
+        if (price <= 0) {
+            throw new IllegalArgumentException("price는 0보다 커야합니다.");
+        }
         this.productId = productId;
         this.productName = productName;
         this.category = category;
@@ -27,6 +30,9 @@ public class Product {
 
     public Product(UUID productId, String productName,
         Category category, long price, String description) {
+        if (price <= 0) {
+            throw new IllegalArgumentException("price는 0보다 커야합니다.");
+        }
         this.productId = productId;
         this.productName = productName;
         this.category = category;

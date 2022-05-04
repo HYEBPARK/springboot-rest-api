@@ -11,21 +11,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
+    private static final Logger log = LoggerFactory.getLogger(ProductRepositoryImpl.class);
 
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public Product insert(Product product) {
-        String insertSql = "INSERT INTO (product_id, name, category, price, description, created_at, updated_at) VALUES (UNHEX(REPLACE(:productId, '-', ''))),:productName, :category, : price, :description)";
+        String insertSql = "INSERT INTO product(product_id, product_name, category, price, description, created_at, updated_at) VALUES (UNHEX(REPLACE(:productId, '-', '')),:productName, :category, :price, :description, :createdAt, :updatedAt)";
         var update = namedParameterJdbcTemplate.update(insertSql, toParamMap(product));
 
         if (update == 0) {
@@ -37,11 +42,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Product update(Product product) {
-        String updateSql = "UPDATE name = :productName, category = :category, price = :price, description = :description, updated_at=:updatedAt WHERE product_id=(UNHEX(REPLACE(:productId, '-', ''))) FROM product)";
+        String updateSql = "UPDATE product SET product_name =:productName, category =:category, price = :price, description = :description, updated_at=:updatedAt WHERE product_id=(UNHEX(REPLACE(:productId, '-', '')))";
         var update = namedParameterJdbcTemplate.update(updateSql,toParamMap(product));
 
         if (update == 0) {
-            throw new RuntimeException("product upated error");
+            throw new RuntimeException("product updated error");
         }
         return product;
     }
@@ -61,7 +66,9 @@ public class ProductRepositoryImpl implements ProductRepository {
                 Collections.singletonMap("productId", id), productRowMapper);
 
             return Optional.of(product);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
+            log.error("product findById error -> {}", e);
+
             return Optional.empty();
         }
     }
@@ -69,9 +76,21 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public boolean deleteById(UUID id) {
         String deleteSql = "DELETE FROM product WHERE product_id = UNHEX(REPLACE(:productId,'-',''))";
-        var delete = namedParameterJdbcTemplate.update(deleteSql, Collections.emptyMap());
+        try {
+            namedParameterJdbcTemplate.update(deleteSql, Collections.singletonMap("productId",id));
 
-        return delete != 0;
+            return true;
+        } catch (InvalidDataAccessApiUsageException e) {
+            log.error("product deleteById error -> {}", e);
+
+            return false;
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        String deleteAllSql = "DELETE FROM product";
+        namedParameterJdbcTemplate.update(deleteAllSql,Collections.emptyMap());
     }
 
     private static Map<String, Object> toParamMap(Product product) {
