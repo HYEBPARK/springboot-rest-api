@@ -1,8 +1,9 @@
-package com.programmers.gccoffee.product.controller;
+package com.programmers.gccoffee.product.service;
 
 import com.programmers.gccoffee.product.model.Category;
 import com.programmers.gccoffee.product.model.Product;
 import com.programmers.gccoffee.product.repository.ProductRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,9 +16,20 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     public Product create(String productName, Category category,
         long price, String description) {
         var product = new Product(UUID.randomUUID(), productName, category, price, description);
+
+        return productRepository.insert(product);
+    }
+
+    public Product create(UUID productId, String productName, Category category,
+        long price, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        var product = new Product(productId, productName, category, price, description,createdAt, updatedAt);
 
         return productRepository.insert(product);
     }
