@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,8 +44,8 @@ public class ProductRestController {
         return ResponseEntity.ok(product.get());
     }
 
-    @PostMapping("/api/v1/new-product")
-    public ResponseEntity postProduct(ProductDto productDto) {
+    @PostMapping("/api/v1/products/new-product")
+    public ResponseEntity postProduct(@RequestBody ProductDto productDto) {
         try {
             var product = productService.create(productDto.getProductName(),
                 productDto.getCategory(), productDto.getPrice(),

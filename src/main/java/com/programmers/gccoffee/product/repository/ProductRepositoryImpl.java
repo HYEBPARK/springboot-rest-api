@@ -14,7 +14,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
+
     private static final Logger log = LoggerFactory.getLogger(ProductRepositoryImpl.class);
 
     @Autowired
@@ -31,10 +32,12 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Product insert(Product product) {
         String insertSql = "INSERT INTO product(product_id, product_name, category, price, description, created_at, updated_at) VALUES (UNHEX(REPLACE(:productId, '-', '')),:productName, :category, :price, :description, :createdAt, :updatedAt)";
-        var update = namedParameterJdbcTemplate.update(insertSql, toParamMap(product));
 
-        if (update == 0) {
-            throw new RuntimeException("product insert error");
+        try {
+            var update = namedParameterJdbcTemplate.update(insertSql, toParamMap(product));
+        } catch (DataIntegrityViolationException e) {
+            log.error("duplication key error");
+            throw new RuntimeException();
         }
 
         return product;
@@ -43,11 +46,14 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Product update(Product product) {
         String updateSql = "UPDATE product SET product_name =:productName, category =:category, price = :price, description = :description, updated_at=:updatedAt WHERE product_id=(UNHEX(REPLACE(:productId, '-', '')))";
-        var update = namedParameterJdbcTemplate.update(updateSql,toParamMap(product));
+
+        var update = namedParameterJdbcTemplate.update(updateSql, toParamMap(product));
 
         if (update == 0) {
-            throw new RuntimeException("product updated error");
+            log.error("product update error");
+            throw new RuntimeException();
         }
+
         return product;
     }
 
@@ -77,7 +83,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     public boolean deleteById(UUID id) {
         String deleteSql = "DELETE FROM product WHERE product_id = UNHEX(REPLACE(:productId,'-',''))";
         try {
-            namedParameterJdbcTemplate.update(deleteSql, Collections.singletonMap("productId",id.toString().getBytes()));
+            namedParameterJdbcTemplate.update(deleteSql,
+                Collections.singletonMap("productId", id.toString().getBytes()));
 
             return true;
         } catch (InvalidDataAccessApiUsageException e) {
@@ -90,7 +97,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public void deleteAll() {
         String deleteAllSql = "DELETE FROM product";
-        namedParameterJdbcTemplate.update(deleteAllSql,Collections.emptyMap());
+        namedParameterJdbcTemplate.update(deleteAllSql, Collections.emptyMap());
     }
 
     private static Map<String, Object> toParamMap(Product product) {

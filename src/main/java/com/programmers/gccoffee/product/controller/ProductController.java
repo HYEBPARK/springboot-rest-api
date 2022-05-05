@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -28,12 +29,16 @@ public class ProductController {
 
     @PostMapping("/")
     public String create(ProductDto productDto) {
-        productService.create(
-            productDto.getProductName(),
-            productDto.getCategory(), productDto.getPrice(),
-            productDto.getDescription());
+        try {
+            productService.create(
+                productDto.getProductName(),
+                productDto.getCategory(), productDto.getPrice(),
+                productDto.getDescription());
 
-        return "redirect:/";
+            return "redirect:/";
+        } catch (RuntimeException e) {
+            return "product/error";
+        }
     }
 
     @GetMapping("/product/list")
@@ -52,14 +57,14 @@ public class ProductController {
         return "product/detail";
     }
 
-    @DeleteMapping("/product/list")
-    public String deleteById(@RequestParam UUID id) {
+    @DeleteMapping("/product/list/delete/{id}")
+    public String deleteById(@PathVariable UUID id) {
         productService.deleteById(id);
 
         return "redirect:/product/list";
     }
 
-    @PostMapping("/product/list/{id}")
+    @PutMapping("/product/list/{id}")
     public String update(@PathVariable UUID id,
         @Validated ProductDto productDto) {
 
