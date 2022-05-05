@@ -5,7 +5,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-public class CreateProductRequest {
+public class ProductDto {
 
     @NotNull
     @Length(min = 2, max = 10)
@@ -18,7 +18,7 @@ public class CreateProductRequest {
     @Length(max = 500)
     private String description;
 
-    public CreateProductRequest(String productName,
+    public ProductDto(String productName,
         Category category, long price, String description) {
         this.productName = productName;
         this.category = category;

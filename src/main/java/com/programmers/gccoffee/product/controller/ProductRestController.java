@@ -44,15 +44,15 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/v1/new-product")
-    public ResponseEntity postProduct(CreateProductRequest createProductRequest) {
+    public ResponseEntity postProduct(ProductDto productDto) {
         try {
-            var product = productService.create(createProductRequest.getProductName(),
-                createProductRequest.getCategory(), createProductRequest.getPrice(),
-                createProductRequest.getDescription());
+            var product = productService.create(productDto.getProductName(),
+                productDto.getCategory(), productDto.getPrice(),
+                productDto.getDescription());
 
             return ResponseEntity.ok(product);
         } catch (IncorrectResultSizeDataAccessException e) {
-            logger.error("Product Controller postProduct -> {}", createProductRequest.toString());
+            logger.error("Product Controller postProduct -> {}", productDto.toString());
 
             return ResponseEntity.badRequest().build();
         }
@@ -67,15 +67,15 @@ public class ProductRestController {
 
     @PutMapping("/api/v1/products/update/{id}")
     public ResponseEntity updateProduct(@PathVariable UUID id,
-        @Validated CreateProductRequest createProductRequest) {
+        @Validated ProductDto productDto) {
 
         if (productService.findById(id).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        var updateProduct = productService.update(id, createProductRequest.getProductName(),
-            createProductRequest.getCategory(), createProductRequest.getPrice(),
-            createProductRequest.getDescription());
+        var updateProduct = productService.update(id, productDto.getProductName(),
+            productDto.getCategory(), productDto.getPrice(),
+            productDto.getDescription());
 
         return ResponseEntity.ok(updateProduct);
     }

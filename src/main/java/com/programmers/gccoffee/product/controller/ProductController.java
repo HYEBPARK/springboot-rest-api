@@ -27,11 +27,11 @@ public class ProductController {
     }
 
     @PostMapping("/")
-    public String create(CreateProductRequest createProductRequest) {
+    public String create(ProductDto productDto) {
         productService.create(
-            createProductRequest.getProductName(),
-            createProductRequest.getCategory(), createProductRequest.getPrice(),
-            createProductRequest.getDescription());
+            productDto.getProductName(),
+            productDto.getCategory(), productDto.getPrice(),
+            productDto.getDescription());
 
         return "redirect:/";
     }
@@ -61,15 +61,15 @@ public class ProductController {
 
     @PostMapping("/product/list/{id}")
     public String update(@PathVariable UUID id,
-        @Validated CreateProductRequest createProductRequest) {
+        @Validated ProductDto productDto) {
 
         if (productService.findById(id).isEmpty()) {
             return "product/error";
         }
 
-        productService.update(id, createProductRequest.getProductName(),
-            createProductRequest.getCategory(), createProductRequest.getPrice(),
-            createProductRequest.getDescription());
+        productService.update(id, productDto.getProductName(),
+            productDto.getCategory(), productDto.getPrice(),
+            productDto.getDescription());
 
         return "redirect:/product/list";
     }

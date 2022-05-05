@@ -11,8 +11,12 @@ class ProductTest {
     @Test
     @DisplayName("price가 0이하면 IllegalException 발생해야함")
     void price() {
-        assertThatThrownBy(() -> new Product(UUID.randomUUID(), "커피1", Category.COFFEE_BEAN_PACKAGE,0L,"커피입니다"));
-        assertThatThrownBy(() -> new Product(UUID.randomUUID(), "커피2", Category.COFFEE_BEAN_PACKAGE,-2L,"커피입니다"));
+        assertThatThrownBy(
+            () -> new Product(UUID.randomUUID(), "커피1", Category.COFFEE_BEAN_PACKAGE, 0L,
+                "커피입니다")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> new Product(UUID.randomUUID(), "커피2", Category.COFFEE_BEAN_PACKAGE, -2L,
+                "커피입니다")).isInstanceOf(IllegalArgumentException.class);
 
     }
 }
