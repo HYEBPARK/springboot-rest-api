@@ -38,8 +38,8 @@ public class Product {
         this.category = category;
         this.price = price;
         this.description = description;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now().withNano(0);
+        this.updatedAt = LocalDateTime.now().withNano(0);
     }
 
     public UUID getProductId() {

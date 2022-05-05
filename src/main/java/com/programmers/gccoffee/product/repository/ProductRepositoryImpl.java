@@ -63,7 +63,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         String selectByIdSql = "SELECT * FROM product WHERE product_id = UNHEX(REPLACE(:productId, '-', ''))";
         try {
             var product = namedParameterJdbcTemplate.queryForObject(selectByIdSql,
-                Collections.singletonMap("productId", id), productRowMapper);
+                Collections.singletonMap("productId", id.toString().getBytes()), productRowMapper);
 
             return Optional.of(product);
         } catch (IncorrectResultSizeDataAccessException e) {
@@ -77,7 +77,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public boolean deleteById(UUID id) {
         String deleteSql = "DELETE FROM product WHERE product_id = UNHEX(REPLACE(:productId,'-',''))";
         try {
-            namedParameterJdbcTemplate.update(deleteSql, Collections.singletonMap("productId",id));
+            namedParameterJdbcTemplate.update(deleteSql, Collections.singletonMap("productId",id.toString().getBytes()));
 
             return true;
         } catch (InvalidDataAccessApiUsageException e) {

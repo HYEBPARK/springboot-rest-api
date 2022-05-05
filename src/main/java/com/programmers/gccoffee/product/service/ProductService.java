@@ -46,7 +46,11 @@ public class ProductService {
         return productRepository.deleteById(id);
     }
 
-    public Product update(Product product) {
+    public Product update(UUID productId, String productName, Category category,
+        long price, String description) {
+        var product = productRepository.findById(productId).get();
+        product.updateProduct(productName,category,price,description);
+
         return productRepository.update(product);
     }
 }
