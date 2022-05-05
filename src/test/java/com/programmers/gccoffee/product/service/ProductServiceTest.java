@@ -26,7 +26,7 @@ public class ProductServiceTest {
     private final ProductService productService = new ProductService(productRepository);
     private final UUID id = UUID.randomUUID();
     private final String name = "커피";
-    private final Category category = Category.COFFEE_BEAN_PACK;
+    private final Category category = Category.COFFEE_BEAN_PACKAGE;
     private final long price = 2200L;
     private final String description = "커피에용";
     private final LocalDateTime createdAt = LocalDateTime.now();

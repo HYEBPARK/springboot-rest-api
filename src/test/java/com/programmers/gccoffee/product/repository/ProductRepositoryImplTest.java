@@ -29,7 +29,7 @@ class ProductRepositoryImplTest {
     @Autowired
     private ProductRepository productRepository;
     private final static Product PRODUCT = new Product(UUID.randomUUID(), "커피",
-        Category.COFFEE_BEAN_PACK, 3300L, "커피에용");
+        Category.COFFEE_BEAN_PACKAGE, 3300L, "커피에용");
 
     @BeforeAll
     static void setup() {
@@ -88,7 +88,7 @@ class ProductRepositoryImplTest {
         //when
         var findAll = productRepository.findAll();
         //then
-        assertThat(products).isEqualTo(products);
+        assertThat(products).isEqualTo(findAll);
     }
 
     @Test
@@ -99,7 +99,7 @@ class ProductRepositoryImplTest {
         //when
         var product = productRepository.findById(id);
         //then
-
+        assertThat(product).isNotEmpty();
     }
 
     @Test
