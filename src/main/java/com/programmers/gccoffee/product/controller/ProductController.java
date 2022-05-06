@@ -21,12 +21,12 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/product/new-product")
+    @GetMapping("/product")
     public String newProduct() {
         return "product/new-product";
     }
 
-    @PostMapping("/")
+    @PostMapping("/product")
     public String create(ProductDto productDto) {
         try {
             productService.create(
@@ -40,7 +40,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/product/list")
+    @GetMapping("/products")
     public String list(Model model) {
         var products = productService.getProducts();
         model.addAttribute("products", products);
@@ -48,7 +48,7 @@ public class ProductController {
         return "product/list";
     }
 
-    @GetMapping("/product/list/{id}")
+    @GetMapping("/products/{id}")
     public String findById(@PathVariable UUID id, Model model) {
         var product = productService.findById(id).get();
         model.addAttribute("product", product);
@@ -56,14 +56,14 @@ public class ProductController {
         return "product/detail";
     }
 
-    @DeleteMapping("/product/list/delete/{productId}")
+    @DeleteMapping("/products/{productId}")
     public String deleteById(@PathVariable("productId") UUID productId) {
         productService.deleteById(productId);
 
-        return "redirect:/product/list";
+        return "redirect:/products";
     }
 
-    @PutMapping("/product/list/{id}")
+    @PutMapping("/products/{id}")
     public String update(@PathVariable UUID id,
         @Validated ProductDto productDto) {
 
@@ -75,7 +75,7 @@ public class ProductController {
             productDto.getCategory(), productDto.getPrice(),
             productDto.getDescription());
 
-        return "redirect:/product/list";
+        return "redirect:/products";
     }
 
     @GetMapping("/")

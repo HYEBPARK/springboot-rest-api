@@ -25,7 +25,7 @@ public class orderRestController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/api/v1/orders/new-order")
+    @PostMapping("/api/v1/order")
     public ResponseEntity postOrder(@RequestBody @Validated OrderDto orderDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             var errors = bindingResult.getAllErrors();

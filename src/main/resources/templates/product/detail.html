@@ -16,7 +16,7 @@
 <body class="container-fluid">
 <h2>product detail</h2>
 <div>
-  <form th:method="put" th:action="@{/product/list/}+*{id}">
+  <form th:method="put" th:action="@{/products/}+*{id}">
     <div th:object="${product}">
       <div class="mb-3">
         <label for="productName" class="form-label">Name</label>
@@ -41,7 +41,7 @@
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>
-<form th:action="@{/product/list/delete/} + *{id}" th:method="delete">
+<form th:action="@{/products/} + *{id}" th:method="delete">
   <input type="submit" class="btn btn-primary" value="Delete"/>
   <a th:href="@{/}" type="button" class="btn btn-secondary">홈</a>
 </form>

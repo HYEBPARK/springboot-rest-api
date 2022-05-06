@@ -31,7 +31,7 @@
   <tbody>
   <tr th:each="product: ${products}" th:object="${product}">
     <td>
-      <a th:href="@{/product/list/{id}(id = *{productId})}" th:text="*{productId}"></a>
+      <a th:href="@{/products/{id}(id = *{productId})}" th:text="*{productId}"></a>
     </td>
     <td th:text="*{productName}"></td>
     <td th:text="*{category}"></td>

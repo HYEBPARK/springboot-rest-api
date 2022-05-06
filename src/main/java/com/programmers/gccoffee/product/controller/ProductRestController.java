@@ -44,7 +44,7 @@ public class ProductRestController {
         return ResponseEntity.ok(product.get());
     }
 
-    @PostMapping("/api/v1/products/new-product")
+    @PostMapping("/api/v1/product")
     public ResponseEntity postProduct(@RequestBody ProductDto productDto) {
         try {
             var product = productService.create(productDto.getProductName(),
@@ -66,7 +66,7 @@ public class ProductRestController {
         return isDelete ? ResponseEntity.ok(true) : ResponseEntity.badRequest().build();
     }
 
-    @PutMapping("/api/v1/products/update/{id}")
+    @PutMapping("/api/v1/products/{id}")
     public ResponseEntity updateProduct(@PathVariable UUID id,
         @Validated ProductDto productDto) {
 
