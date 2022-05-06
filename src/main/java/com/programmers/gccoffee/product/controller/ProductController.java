@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ProductController {
@@ -57,9 +56,9 @@ public class ProductController {
         return "product/detail";
     }
 
-    @DeleteMapping("/product/list/delete/{id}")
-    public String deleteById(@PathVariable UUID id) {
-        productService.deleteById(id);
+    @DeleteMapping("/product/list/delete/{productId}")
+    public String deleteById(@PathVariable("productId") UUID productId) {
+        productService.deleteById(productId);
 
         return "redirect:/product/list";
     }
