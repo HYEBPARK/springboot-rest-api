@@ -41,6 +41,7 @@
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>
+<br>
 <form th:action="@{/products/} + *{id}" th:method="delete">
   <input type="submit" class="btn btn-primary" value="Delete"/>
   <a th:href="@{/}" type="button" class="btn btn-secondary">홈</a>

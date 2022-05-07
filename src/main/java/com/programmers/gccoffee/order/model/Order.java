@@ -3,7 +3,6 @@ package com.programmers.gccoffee.order.model;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.constraints.Email;
 
 public class Order {
     private final UUID orderId;

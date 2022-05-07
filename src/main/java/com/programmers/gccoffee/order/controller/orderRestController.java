@@ -2,6 +2,7 @@ package com.programmers.gccoffee.order.controller;
 
 import com.programmers.gccoffee.order.OrderService;
 import com.programmers.gccoffee.order.model.Order;
+import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class orderRestController {
+
     private final static Logger log = LoggerFactory.getLogger(orderRestController.class);
     private final OrderService orderService;
 
@@ -26,29 +27,33 @@ public class orderRestController {
     }
 
     @PostMapping("/api/v1/order")
-    public ResponseEntity postOrder(@RequestBody @Validated OrderDto orderDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            var errors = bindingResult.getAllErrors();
-            errors.forEach((error) -> System.out.println(error.getDefaultMessage()));
+    public ResponseEntity<OrderDto> postOrder(@RequestBody @Validated OrderDto orderDto,
+        BindingResult bindingResult) {
 
-            return ResponseEntity.badRequest().body(errors);
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(
+                (error) -> log.error("orderDto value error -> {}", error.getDefaultMessage()));
+
+            return ResponseEntity.badRequest().body(orderDto);
         }
-        var order = orderService.create(orderDto.getEmail(), orderDto.getAddress(), orderDto.getPostcode(),
+
+        orderService.create(orderDto.getEmail(), orderDto.getAddress(),
+            orderDto.getPostcode(),
             orderDto.getOrderItems());
 
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(orderDto);
     }
 
     @GetMapping("/api/v1/orders")
-    public ResponseEntity getOrders() {
-        orderService.getOrders().forEach((v) -> System.out.println(v.getOrderItems().size()));
+    public ResponseEntity<List<Order>> getOrders() {
 
         return ResponseEntity.ok(orderService.getOrders());
     }
 
     @DeleteMapping("/api/v1/orders/{orderId}")
-    public ResponseEntity<UUID> deleteOrderById (@PathVariable UUID orderId) {
+    public ResponseEntity<UUID> deleteOrderById(@PathVariable UUID orderId) {
 
-        return orderService.deleteById(orderId) ? ResponseEntity.ok(orderId) : ResponseEntity.badRequest().build();
+        return orderService.deleteById(orderId) ? ResponseEntity.ok(orderId)
+            : ResponseEntity.badRequest().build();
     }
 }

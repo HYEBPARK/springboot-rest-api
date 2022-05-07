@@ -7,15 +7,18 @@ import org.hibernate.validator.constraints.Length;
 
 public class ProductDto {
 
-    @NotNull
-    @Length(min = 2, max = 10)
+    @NotNull(message = "productName은 필수 입력입니다.")
+    @Length(max = 15, message = "productName은 15자 이내로 작성해주세요.")
     private String productName;
-    @NotNull
+
+    @NotNull(message = "category는 필수 입력입니다.")
     private Category category;
-    @NotNull
-    @Min(0)
+
+    @NotNull(message = "price는 필수 입력입니다.")
+    @Min(value = 0, message = "price는 0보다 커야합니다.")
     private long price;
-    @Length(max = 500)
+
+    @Length(max = 500, message = "description은 500자 이내로 작성해주세요.")
     private String description;
 
     public ProductDto(String productName,
