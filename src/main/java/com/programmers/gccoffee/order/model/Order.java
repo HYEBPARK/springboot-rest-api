@@ -9,7 +9,7 @@ public class Order {
     private final String email;
     private  String address;
     private  String postcode;
-    private List<OrderItem> orderItems;
+    private  final List<OrderItem> orderItems;
     private  OrderStatus orderStatus;
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -33,18 +33,6 @@ public class Order {
         this.address = address;
         this.postcode = postcode;
         this.orderItems = orderItems;
-        this.orderStatus = orderStatus;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public Order(UUID orderId, String email, String address, String postcode,
-        OrderStatus orderStatus, LocalDateTime createdAt,
-        LocalDateTime updatedAt) {
-        this.orderId = orderId;
-        this.email = email;
-        this.address = address;
-        this.postcode = postcode;
         this.orderStatus = orderStatus;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -82,7 +70,4 @@ public class Order {
         return updatedAt;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
 }

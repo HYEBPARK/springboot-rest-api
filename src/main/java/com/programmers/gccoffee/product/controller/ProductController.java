@@ -49,7 +49,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public String findById(@PathVariable UUID id, Model model){
+    public String findById(@PathVariable UUID id, Model model) {
         if (productService.findById(id).isEmpty()) {
             return "product/error";
         }

@@ -66,18 +66,26 @@ public class ProductRestController {
 
 
     @PutMapping("/api/v1/products/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable UUID id,
-        @Validated ProductDto productDto) {
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable UUID id,
+        @Validated ProductDto productDto, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(
+                (error) -> log.error("update productDto value error -> {}",
+                    error.getDefaultMessage()));
+
+            return ResponseEntity.badRequest().body(productDto);
+        }
 
         if (productService.findById(id).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        var updateProduct = productService.update(id, productDto.getProductName(),
+        productService.update(id, productDto.getProductName(),
             productDto.getCategory(), productDto.getPrice(),
             productDto.getDescription());
 
-        return ResponseEntity.ok(updateProduct);
+        return ResponseEntity.ok(productDto);
     }
 
     @DeleteMapping("/api/v1/products/{id}")

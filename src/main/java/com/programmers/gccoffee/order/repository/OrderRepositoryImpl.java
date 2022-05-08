@@ -73,7 +73,6 @@ public class OrderRepositoryImpl implements OrderRepository {
             var items = namedParameterJdbcTemplate.query(selectOrderItemById,
                 Collections.singletonMap("orderId", order.getOrderId().toString()),
                 orderItemRowMapper);
-            order.setOrderItems(items);
         }
 
         return orders;
@@ -97,7 +96,15 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
-    private static RowMapper<Order> orderRowMapper = (rs, rowNum) -> {
+    public List<OrderItem> findOrderItem(UUID orderId) {
+        String selectOrderItem = "SELECT * FROM order_item WHERE order_id = UNHEX(REPLACE(:orderId,'-',''))";
+        var orderItems = namedParameterJdbcTemplate.query(selectOrderItem,
+            Collections.singletonMap("orderId", orderId.toString()), orderItemRowMapper);
+
+        return orderItems;
+    }
+
+    private RowMapper<Order> orderRowMapper = (rs, rowNum) -> {
         var orderId = toUUID(rs.getBytes("order_id"));
         var email = rs.getString("email");
         var address = rs.getString("address");
@@ -105,8 +112,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         var orderStatus = OrderStatus.valueOf(rs.getString("order_status"));
         var createdAt = toLocalDateTime(rs.getTimestamp("created_at"));
         var updatedAt = toLocalDateTime(rs.getTimestamp("updated_at"));
-
-        return new Order(orderId, email, address, postcode, orderStatus, createdAt, updatedAt);
+        var orderItem = findOrderItem(orderId);
+        return new Order(orderId, email, address, postcode, orderItem, orderStatus, createdAt,
+            updatedAt);
     };
 
     private RowMapper<OrderItem> orderItemRowMapper = (rs, rowNum) -> {
