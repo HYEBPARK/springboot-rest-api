@@ -3,6 +3,7 @@ package com.programmers.gccoffee.product.controller;
 import com.programmers.gccoffee.product.model.Product;
 import com.programmers.gccoffee.product.service.ProductService;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,46 +28,45 @@ public class ProductRestController {
     ProductService productService;
 
     @GetMapping("/api/v1/products")
-    public ResponseEntity<List<Product>> getProducts() {
-        var products = productService.getProducts();
+    public List<Product> getProducts() {
 
-        return ResponseEntity.ok(products);
+        return productService.getProducts();
     }
 
     @GetMapping("/api/v1/products/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable UUID id) {
+    public Product getProductById(@PathVariable UUID id) {
         var product = productService.findById(id);
 
         if (product.isEmpty()) {
             log.error("Product Controller getProductById -> {}", id);
 
-            return ResponseEntity.badRequest().build();
+            return null;
         }
 
-        return ResponseEntity.ok(product.get());
+        return product.get();
     }
 
     @PostMapping("/api/v1/product")
-    public ResponseEntity<ProductDto> postProduct(@RequestBody @Validated ProductDto productDto,
+    public ProductDto postProduct(@Validated ProductDto productDto,
         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(
                 (error) -> log.error("productDto value error -> {}", error.getDefaultMessage()));
 
-            return ResponseEntity.badRequest().body(productDto);
+            return null;
         }
 
         productService.create(productDto.getProductName(),
             productDto.getCategory(), productDto.getPrice(),
             productDto.getDescription());
 
-        return ResponseEntity.ok(productDto);
+        return productDto;
     }
 
 
     @PutMapping("/api/v1/products/{id}")
-    public ResponseEntity<ProductDto> updateProduct(@PathVariable UUID id,
+    public ProductDto updateProduct(@PathVariable UUID id,
         @Validated ProductDto productDto, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -74,25 +74,24 @@ public class ProductRestController {
                 (error) -> log.error("update productDto value error -> {}",
                     error.getDefaultMessage()));
 
-            return ResponseEntity.badRequest().body(productDto);
+            return null;
         }
 
         if (productService.findById(id).isEmpty()) {
-            return ResponseEntity.badRequest().build();
+            return null;
         }
 
         productService.update(id, productDto.getProductName(),
             productDto.getCategory(), productDto.getPrice(),
             productDto.getDescription());
 
-        return ResponseEntity.ok(productDto);
+        return productDto;
     }
 
     @DeleteMapping("/api/v1/products/{id}")
-    public ResponseEntity<Boolean> deleteProductById(@PathVariable UUID id) {
-        var isDelete = productService.deleteById(id);
+    public boolean deleteProductById(@PathVariable UUID id) {
 
-        return isDelete ? ResponseEntity.ok(true) : ResponseEntity.badRequest().build();
+        return  productService.deleteById(id);
     }
 }
 

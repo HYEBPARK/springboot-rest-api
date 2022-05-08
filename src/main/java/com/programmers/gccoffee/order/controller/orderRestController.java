@@ -27,33 +27,33 @@ public class orderRestController {
     }
 
     @PostMapping("/api/v1/order")
-    public ResponseEntity<OrderDto> postOrder(@RequestBody @Validated OrderDto orderDto,
+    public OrderDto postOrder(@RequestBody @Validated OrderDto orderDto,
         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(
                 (error) -> log.error("orderDto value error -> {}", error.getDefaultMessage()));
 
-            return ResponseEntity.badRequest().body(orderDto);
+            return null;
         }
 
         orderService.create(orderDto.getEmail(), orderDto.getAddress(),
             orderDto.getPostcode(),
             orderDto.getOrderItems());
 
-        return ResponseEntity.ok(orderDto);
+        return orderDto;
     }
 
     @GetMapping("/api/v1/orders")
-    public ResponseEntity<List<Order>> getOrders() {
+    public List<Order> getOrders() {
 
-        return ResponseEntity.ok(orderService.getOrders());
+        return orderService.getOrders();
     }
 
     @DeleteMapping("/api/v1/orders/{orderId}")
-    public ResponseEntity<UUID> deleteOrderById(@PathVariable UUID orderId) {
+    public UUID deleteOrderById(@PathVariable UUID orderId) {
+        orderService.deleteById(orderId);
 
-        return orderService.deleteById(orderId) ? ResponseEntity.ok(orderId)
-            : ResponseEntity.badRequest().build();
+        return orderId;
     }
 }
